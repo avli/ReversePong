@@ -220,10 +220,10 @@ def newGame(twoplayer=False):
             self.score = 0
         def update(self, ball):
             global screen, white
-            if ball.rect.centery < self.rect.centery:
+            if ball.rect.centery > self.rect.centery:
                 if self.rect.top > 20:
                     self.rect.centery -= self.speed
-            if ball.rect.centery > self.rect.centery:
+            if ball.rect.centery < self.rect.centery:
                 if self.rect.bottom < self.area[1]-20:
                     self.rect.centery += self.speed
             pygame.draw.rect(screen, white, self.rect)
@@ -241,10 +241,12 @@ def newGame(twoplayer=False):
             while self.speed[1] == 0:
                 self.speed[1] = random.randint(-2, 2)
             self.area = [screen.get_width(), screen.get_height()]
-            self.paddlecols = 0
+            # self.paddlecols = 0
+            self.wallcols = 0  # The number of collisions with walls
         def update(self, paddle, enemy):
             global screen, white, phase, spap, die
             if self.rect.top <= 0 or self.rect.bottom >= self.area[1]:
+                # Collision with top or bottom
                 phase.play()
                 self.speed[1] = -self.speed[1]
                 if self.speed[1] < 0:
@@ -252,41 +254,41 @@ def newGame(twoplayer=False):
                 elif self.speed[1] > 0:
                     self.speed[1] += 1
             if self.rect.right >= self.area[0]:
-                die.play()
-                paddle.score += 1
-                self.rect.center = self.center
-                self.speed[0] = 0
-                self.speed[1] = 0
-                while self.speed[0] == 0:
-                    self.speed[0] = random.randint(-2, 2)
-                while self.speed[1] == 0:
-                    self.speed[1] = random.randint(-2, 2)
-            elif self.rect.left <= 0:
-                die.play()
-                enemy.score += 1
-                self.rect.center = self.center
-                self.speed[0] = 0
-                self.speed[1] = 0
-                while self.speed[0] == 0:
-                    self.speed[0] = random.randint(-2, 2)
-                while self.speed[1] == 0:
-                    self.speed[1] = random.randint(-2, 2)
+                # Collision with the right wall
+                phase.play()
+                self.wallcols += 1
+                self.rect.left -= 1
+                self.speed[0] = -self.speed[0]
+            elif self.rect.left <= 0:  
+                # Collision with the left wall
+                phase.play()
+                self.wallcols += 1
+                self.rect.right += 1
+                self.speed[0] = -self.speed[0]
             if self.rect.colliderect(paddle.rect) or self.rect.colliderect(enemy.rect):
-                self.paddlecols += 1
-                if self.paddlecols > 1:
-                    if self.rect.colliderect(paddle.rect):
-                        self.rect.right += 7
-                    elif self.rect.colliderect(enemy.rect):
-                        self.rect.left -= 7
-                else:
-                    spap.play()
-                    self.speed[0] = -self.speed[0]
-                    if self.speed[0] < 0:
-                        self.speed[0] -= 1
-                    elif self.speed[0] > 0:
-                        self.speed[0] += 1
+                # Collision with paddle or enemy
+                if self.rect.colliderect(paddle.rect):
+                    die.play()
+                    enemy.score += 1
+                elif self.rect.colliderect(enemy.rect):
+                    die.play()
+                    paddle.score += 1
+                self.rect.center = self.center
+                self.speed[0] = 0
+                self.speed[1] = 0
+                while self.speed[0] == 0:
+                    self.speed[0] = random.randint(-2, 2)
+                while self.speed[1] == 0:
+                    self.speed[1] = random.randint(-2, 2)
+                # else:
+                #     spap.play()
+                #     self.speed[0] = -self.speed[0]
+                #     if self.speed[0] < 0:
+                #         self.speed[0] -= 1
+                #     elif self.speed[0] > 0:
+                #         self.speed[0] += 1
             else:
-                self.paddlecols = 0
+                self.wallcols = 0
             if self.speed[0] > 6:
                 self.speed[0] = 6
             elif self.speed[0] < -6:
