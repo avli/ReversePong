@@ -193,7 +193,7 @@ def newGame(twoplayer=False):
         def __init__(self, upkey, downkey):
             global screen
             self.area = [screen.get_width(), screen.get_height()]
-            self.pos = [20, self.area[1]/2]
+            self.pos = [0, self.area[1]/2]
             self.rect = Rect((self.pos), (10, 40))
             self.speed = 5
             self.score = 0
@@ -214,7 +214,7 @@ def newGame(twoplayer=False):
         def __init__(self):
             global screen
             self.area = [screen.get_width(), screen.get_height()]
-            self.pos = [self.area[0]-30, self.area[1]/2]
+            self.pos = [self.area[0]-10, self.area[1]/2]
             self.rect = Rect((self.pos), (10, 40))
             self.speed = 5
             self.score = 0
@@ -249,7 +249,6 @@ def newGame(twoplayer=False):
             global screen, white, phase, spap, die
             if self.rect.top <= 0 or self.rect.bottom >= self.area[1]:
                 # Collision with top or bottom
-                phase.play()
                 self.speed[1] = -self.speed[1]
                 if self.speed[1] < 0:
                     self.speed[1] -= 1
@@ -259,14 +258,14 @@ def newGame(twoplayer=False):
                 # Collision with the right wall
                 phase.play()
                 self.wallcols += 1
-                self.rect.left -= 1
+                self.rect.right = self.area[0] - 1
                 self.speed[0] = -self.speed[0]
                 self.multiball.add_ball(self)
             elif self.rect.left <= 0:  
                 # Collision with the left wall
                 phase.play()
                 self.wallcols += 1
-                self.rect.right += 1
+                self.rect.left = 1
                 self.speed[0] = -self.speed[0]
                 self.multiball.add_ball(self)
             if self.rect.colliderect(paddle.rect) or self.rect.colliderect(enemy.rect):
@@ -274,61 +273,59 @@ def newGame(twoplayer=False):
                 if self.rect.colliderect(paddle.rect):
                     die.play()
                     enemy.score += 1
-                    self.multiball.reset(self)
+                    self.multiball.reset = True
                 elif self.rect.colliderect(enemy.rect):
                     die.play()
                     paddle.score += 1
-                    self.multiball.reset(self)
-                self.rect.center = self.center
-                self.speed[0] = 0
-                self.speed[1] = 0
-                while self.speed[0] == 0:
-                    self.speed[0] = random.randint(-2, 2)
-                while self.speed[1] == 0:
-                    self.speed[1] = random.randint(-2, 2)
-                # else:
-                #     spap.play()
-                #     self.speed[0] = -self.speed[0]
-                #     if self.speed[0] < 0:
-                #         self.speed[0] -= 1
-                #     elif self.speed[0] > 0:
-                #         self.speed[0] += 1
+                    self.multiball.reset = True
             else:
                 self.wallcols = 0
             if self.speed[0] > 6:
                 self.speed[0] = 6
             elif self.speed[0] < -6:
                 self.speed[0] = -6
+            elif self.speed[1] > 6:
+                self.speed[1] = 6
+            elif self.speed[1] < -6:
+                self.speed[1] = -6
+
             self.rect = self.rect.move(self.speed)
             pygame.draw.rect(screen, white, self.rect)
             return
 
     class MultiBall(object):
-        def __init__(self, number_of_balls=1, maxbolls=3):
+        def __init__(self, number_of_balls=1, maxbolls=100):
             self.number_of_balls, self.maxbolls = number_of_balls, maxbolls
             self._container = []
-            for _ in range(number_of_balls):
+            for _ in range(self.number_of_balls):
                 self._container.append(Ball(self))
             self.rect, self.center = self._container[0].rect, self._container[0].center
+            self.reset = False
 
         def update(self, paddle, enemy):
+            if self.reset:
+                self._container = []
+                for _ in range(self.number_of_balls):
+                    self._container.append(Ball(self))
+                self.reset = False
             [ball.update(paddle, enemy) for ball in self._container]
             self.rect, self.center = self._container[0].rect, self._container[0].center
 
         def add_ball(self, parent):
+            # import pdb; pdb.set_trace()
             if len(self._container) < self.maxbolls:
-                ball = Ball(self)
-                ball.rect = parent.rect
-                if (ball.rect.x > screen.get_width() / 2):
-                    ball.speed[0] = random.randint(-2, -1)
-                elif (ball.rect.x < screen.get_width() / 2):
-                    ball.speed[0] = random.randint(1, 2)
-                self._container.append(ball)
-
-        def reset(self, from_ball):
-            for ball in self._container:
-                if ball is not from_ball:
-                    self._container.remove(ball)
+                if (parent.wallcols < 1) and (len(self._container) > 3):
+                    return
+                new_ball = Ball(self)
+                new_ball.rect =  parent.rect.copy()
+                print new_ball.rect.right, ball.rect.left
+                if (new_ball.rect.x > screen.get_width() / 2):
+                    while new_ball.speed == parent.speed:
+                        new_ball.speed[0] = random.randint(-6, -1)
+                elif (new_ball.rect.x < screen.get_width() / 2):
+                    while new_ball.speed == parent.speed:
+                        new_ball.speed[0] = random.randint(1, 6)
+                self._container.append(new_ball)
 
     ball = MultiBall()
     paddle = Paddle(pygame.K_UP, pygame.K_DOWN)
