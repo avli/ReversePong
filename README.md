@@ -16,7 +16,7 @@ Max OS X do
 $ brew install homebrew/python/pygame
 ```
 
-To now how to install pygame on other systems, please, refer to 
+To know how to install pygame on other systems, please, refer to 
 [pygame documentation](http://www.pygame.org/wiki/GettingStarted).
 
 # License
