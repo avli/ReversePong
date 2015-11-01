@@ -19,7 +19,7 @@
 # ball is now smaller, with randomized speeds when someone scores.
 # UPDATE 01/11/2011: added code to stop ball from resetting its speed to 0
 # UPDATE 01/19/2011: added sound effects and better menu.
-import pygame, sys, time, random, os
+import pygame, sys, time, random, os, math, copy
 from pygame.locals import *
 
 pygame.init()
@@ -173,8 +173,8 @@ def menu():
     titlemenu = Menu([20, 65], wordcolor=[255, 0, 0], selectedcolor=[255, 255, 0], data=['1-Player game', '2-Player game', 'Quit'])
     screen.fill(black)
     font = pygame.font.Font(None, 32)
-    screen.blit(font.render('The controls are: Up-Down for Player 1', True, white, black), [0, 0])
-    screen.blit(font.render('W-S for Player 2. Solo: Up-Down', True, white, black), [0, 32])
+    screen.blit(font.render('The controls are: W-S for Player 1', True, white, black), [0, 0])
+    screen.blit(font.render('Up-Down for Player 2. Solo: W-S', True, white, black), [0, 32])
     pygame.display.flip()
     while not titlemenu.selected:
         titlemenu.update(screen, pygame.event.poll())
@@ -220,10 +220,21 @@ def newGame(twoplayer=False):
             self.score = 0
         def update(self, ball):
             global screen, white
-            if ball.rect.centery > self.rect.centery:
+
+            # Enemy will use the closest ball
+            balls = copy.copy(ball.container)
+            best_so_far = self.area[0]
+            closest_ball = None
+            for each in balls:
+                distance = self.area[0] - math.sqrt((self.rect.centerx - each.rect.centerx)**2 +
+                                                    (self.rect.centery - each.rect.centery)**2)
+                if distance < best_so_far:
+                    closest_ball = each
+
+            if closest_ball.rect.centery > self.rect.centery:
                 if self.rect.top > 20:
                     self.rect.centery -= self.speed
-            if ball.rect.centery < self.rect.centery:
+            if closest_ball.rect.centery < self.rect.centery:
                 if self.rect.bottom < self.area[1]-20:
                     self.rect.centery += self.speed
             pygame.draw.rect(screen, white, self.rect)
@@ -296,40 +307,38 @@ def newGame(twoplayer=False):
     class MultiBall(object):
         def __init__(self, number_of_balls=1, maxbolls=100):
             self.number_of_balls, self.maxbolls = number_of_balls, maxbolls
-            self._container = []
+            self.container = []
             for _ in range(self.number_of_balls):
-                self._container.append(Ball(self))
-            self.rect, self.center = self._container[0].rect, self._container[0].center
+                self.container.append(Ball(self))
+            self.rect, self.center = self.container[0].rect, self.container[0].center
             self.reset = False
 
         def update(self, paddle, enemy):
             if self.reset:
-                self._container = []
+                self.container = []
                 for _ in range(self.number_of_balls):
-                    self._container.append(Ball(self))
+                    self.container.append(Ball(self))
                 self.reset = False
-            [ball.update(paddle, enemy) for ball in self._container]
-            self.rect, self.center = self._container[0].rect, self._container[0].center
+            [ball.update(paddle, enemy) for ball in self.container]
 
         def add_ball(self, parent):
             # import pdb; pdb.set_trace()
-            if len(self._container) < self.maxbolls:
-                if (parent.wallcols < 1) and (len(self._container) > 3):
+            if len(self.container) < self.maxbolls:
+                if (parent.wallcols < 1) and (len(self.container) > 3):
                     return
                 new_ball = Ball(self)
                 new_ball.rect =  parent.rect.copy()
-                print new_ball.rect.right, ball.rect.left
                 if (new_ball.rect.x > screen.get_width() / 2):
                     while new_ball.speed == parent.speed:
                         new_ball.speed[0] = random.randint(-6, -1)
                 elif (new_ball.rect.x < screen.get_width() / 2):
                     while new_ball.speed == parent.speed:
                         new_ball.speed[0] = random.randint(1, 6)
-                self._container.append(new_ball)
+                self.container.append(new_ball)
 
     ball = MultiBall()
-    paddle = Paddle(pygame.K_UP, pygame.K_DOWN)
-    paddle_two = Paddle(pygame.K_w, pygame.K_s)
+    paddle = Paddle(pygame.K_w, pygame.K_s)
+    paddle_two = Paddle(pygame.K_UP, pygame.K_DOWN)
     paddle_two.pos = [screen.get_width()-30, screen.get_height()/2]
     paddle_two.rect.center = paddle_two.pos
     enemy = Enemy()
