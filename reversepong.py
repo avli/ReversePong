@@ -1,9 +1,9 @@
 #! usr/bin/python
 # PongClone- A Python and Pygame version of the classic arcade game.
- #   Copyright (C) 2011 T. S. Hayden Dennison
+#   Copyright (C) 2011 T. S. Hayden Dennison
 #
- #   This program is free software: you can redistribute it and/or modify
-  #  it under the terms of the GNU General Public License as published by
+#   This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
@@ -12,8 +12,8 @@
  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  #   GNU General Public License for more details.
 #
- #   You should have received a copy of the GNU General Public License
-  #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   You should have received a copy of the GNU General Public License
+ #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # UPDATE 01/08/2011: added two player mode, updated menu
 # UPDATE 01/09/2011: updated ball physics, fixed second player and enemy having unfair adventage by being closer to the wall
 # ball is now smaller, with randomized speeds when someone scores.
@@ -45,13 +45,13 @@ def random_color():
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
- #   This program is distributed in the hope that it will be useful,
- #   but WITHOUT ANY WARRANTY; without even the implied warranty of
- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- #   GNU General Public License for more details.
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
 #
- #   You should have received a copy of the GNU General Public License
-  #  along with this program.  If not, see <http://www.gnu.org/licenses/>
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>
 # UPDATE 01/14/2011: fixed window being too big.
 # UPDATE 01/15/2011: added mouse control, rewrote most of the menu.update() code.
 # UPDATE 01/18/2011: Fixed some syntax and run-time bugs.
@@ -120,7 +120,7 @@ class Menu():
         self.rect.width = maxsize*self.textsize/2
         pygame.draw.rect(screen, self.backcolor, self.rect)# Draw the text box
         pygame.draw.rect(screen, self.wordcolor, self.rect, 1)# Draw the text box outline
-        
+
         # Update rects and surfaces
         for surf in self.textsurfs:
             if not self.textsurfs.index(surf) == self.cursorpos:
@@ -215,7 +215,7 @@ def newGame(twoplayer=False):
                     self.rect.bottom += self.speed
             pygame.draw.rect(screen, self.color, self.rect)
             return
-    
+
     class Enemy():
         def __init__(self):
             global screen
@@ -279,7 +279,7 @@ def newGame(twoplayer=False):
                 self.rect.right = self.area[0] - 1
                 self.speed[0] = -self.speed[0]
                 self.multiball.add_ball(self)
-            elif self.rect.left <= 0:  
+            elif self.rect.left <= 0:
                 # Collision with the left wall
                 phase.play()
                 self.wallcols += 1
