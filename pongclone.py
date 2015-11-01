@@ -28,7 +28,12 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption('PongClone')
 white = [255, 255, 255]
 black = [0, 0, 0]
+blue = [33, 33, 192]
+red = [192, 33, 33]
 clock = pygame.time.Clock()
+
+def random_color():
+    return [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
 
 ###################################################################################################################################################################
 # This is a menu class module. You can make text-based menus of any length with it
@@ -207,7 +212,7 @@ def newGame(twoplayer=False):
             elif keys[self.downkey]:
                 if self.rect.bottom < self.area[1]-20:
                     self.rect.bottom += self.speed
-            pygame.draw.rect(screen, white, self.rect)
+            pygame.draw.rect(screen, blue, self.rect)
             return
     
     class Enemy():
@@ -237,7 +242,7 @@ def newGame(twoplayer=False):
             if closest_ball.rect.centery < self.rect.centery:
                 if self.rect.bottom < self.area[1]-20:
                     self.rect.centery += self.speed
-            pygame.draw.rect(screen, white, self.rect)
+            pygame.draw.rect(screen, red, self.rect)
             return
 
     class Ball():
@@ -246,15 +251,16 @@ def newGame(twoplayer=False):
             self.pos = [screen.get_width()/2, screen.get_height()/2]
             self.center = self.pos
             self.rect = Rect((self.pos), (15, 15))
-            self.speed = [random.randint(-2, 2), random.randint(-2, 2)]
+            self.speed = [random.randint(-6, 6), random.randint(-6, 6)]
             while self.speed[0] == 0:
-                self.speed[0] = random.randint(-2, 2)
+                self.speed[0] = random.randint(-6, 6)
             while self.speed[1] == 0:
-                self.speed[1] = random.randint(-2, 2)
+                self.speed[1] = random.randint(-6, 6)
             self.area = [screen.get_width(), screen.get_height()]
             # self.paddlecols = 0
             self.wallcols = 0  # The number of collisions with walls
             self.multiball = multiball
+            self.color = random_color()
 
         def update(self, paddle, enemy):
             global screen, white, phase, spap, die
@@ -289,8 +295,6 @@ def newGame(twoplayer=False):
                     die.play()
                     paddle.score += 1
                     self.multiball.reset = True
-            else:
-                self.wallcols = 0
             if self.speed[0] > 6:
                 self.speed[0] = 6
             elif self.speed[0] < -6:
@@ -301,7 +305,7 @@ def newGame(twoplayer=False):
                 self.speed[1] = -6
 
             self.rect = self.rect.move(self.speed)
-            pygame.draw.rect(screen, white, self.rect)
+            pygame.draw.rect(screen, self.color, self.rect)
             return
 
     class MultiBall(object):
@@ -322,9 +326,8 @@ def newGame(twoplayer=False):
             [ball.update(paddle, enemy) for ball in self.container]
 
         def add_ball(self, parent):
-            # import pdb; pdb.set_trace()
             if len(self.container) < self.maxbolls:
-                if (parent.wallcols < 1) and (len(self.container) > 3):
+                if (parent.wallcols < 3):
                     return
                 new_ball = Ball(self)
                 new_ball.rect =  parent.rect.copy()
@@ -334,6 +337,7 @@ def newGame(twoplayer=False):
                 elif (new_ball.rect.x < screen.get_width() / 2):
                     while new_ball.speed == parent.speed:
                         new_ball.speed[0] = random.randint(1, 6)
+                parent.wallcols = 0
                 self.container.append(new_ball)
 
     ball = MultiBall()
@@ -350,19 +354,19 @@ def gameLoop(paddle, enemy, ball, twoplayer, paddle_two):
     enemyscore = pygame.font.Font(None, 32)
     topscore = 0
     screen.fill(black)
-    screen.blit(paddlescore.render('3', True, white), ball.center)
+    screen.blit(paddlescore.render('3', True, random_color()), ball.center)
     pygame.display.flip()
     time.sleep(1)
     screen.fill(black)
-    screen.blit(paddlescore.render('2', True, white), ball.center)
+    screen.blit(paddlescore.render('2', True, random_color()), ball.center)
     pygame.display.flip()
     time.sleep(1)
     screen.fill(black)
-    screen.blit(paddlescore.render('1', True, white), ball.center)
+    screen.blit(paddlescore.render('1', True, random_color()), ball.center)
     pygame.display.flip()
     time.sleep(1)
     screen.fill(black)
-    screen.blit(paddlescore.render('GO!', True, white), ball.center)
+    screen.blit(paddlescore.render('GO!', True, random_color()), ball.center)
     pygame.display.flip()
     time.sleep(0.5)
     while not topscore > 9:
