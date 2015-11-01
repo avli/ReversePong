@@ -1,32 +1,31 @@
-#!/usr/bin/python
+#! usr/bin/python
 # PongClone- A Python and Pygame version of the classic arcade game.
-# Copyright (C) 2011 T. S. Hayden Dennison, 2015 Andrey Lisin
+ #   Copyright (C) 2011 T. S. Hayden Dennison
 #
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
+ #   This program is free software: you can redistribute it and/or modify
+  #  it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+ #   This program is distributed in the hope that it will be useful,
+ #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #   GNU General Public License for more details.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #   You should have received a copy of the GNU General Public License
+  #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # UPDATE 01/08/2011: added two player mode, updated menu
 # UPDATE 01/09/2011: updated ball physics, fixed second player and enemy having unfair adventage by being closer to the wall
 # ball is now smaller, with randomized speeds when someone scores.
 # UPDATE 01/11/2011: added code to stop ball from resetting its speed to 0
 # UPDATE 01/19/2011: added sound effects and better menu.
-# UPDATE 11/01/2015 (Andrey Lisin): the game was tweaked to a reverse version. Enjoy :)
 import pygame, sys, time, random, os, math, copy
 from pygame.locals import *
 
 pygame.init()
 size = width, height = 640, 480
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption('ReversePong')
+pygame.display.set_caption('PongClone')
 white = [255, 255, 255]
 black = [0, 0, 0]
 blue = [33, 33, 192]
@@ -39,20 +38,20 @@ def random_color():
 ###################################################################################################################################################################
 # This is a menu class module. You can make text-based menus of any length with it
 # SimMen - menu class module with example
-#   Copyright (C) 2011 T. S. Hayden Dennison
+ #   Copyright (C) 2011 T. S. Hayden Dennison
 #
-#   This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
+ #   This program is free software: you can redistribute it and/or modify
+  #  it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+ #   This program is distributed in the hope that it will be useful,
+ #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #   GNU General Public License for more details.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>
+ #   You should have received a copy of the GNU General Public License
+  #  along with this program.  If not, see <http://www.gnu.org/licenses/>
 # UPDATE 01/14/2011: fixed window being too big.
 # UPDATE 01/15/2011: added mouse control, rewrote most of the menu.update() code.
 # UPDATE 01/18/2011: Fixed some syntax and run-time bugs.
