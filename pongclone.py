@@ -385,11 +385,11 @@ def gameLoop(paddle, enemy, ball, twoplayer, paddle_two):
             scores = [paddle.score, enemy.score]
         topscore = sorted(scores, reverse=True)
         topscore = topscore[0]
-        screen.blit(paddlescore.render(str(paddle.score), True, white), [270, 0])
+        screen.blit(paddlescore.render(str(paddle.score), True, blue), [270, 0])
         if twoplayer:
-            screen.blit(enemyscore.render(str(paddle_two.score), True, white), [360, 0])
+            screen.blit(enemyscore.render(str(paddle_two.score), True, red), [360, 0])
         else:
-            screen.blit(enemyscore.render(str(enemy.score), True, white), [360, 0])
+            screen.blit(enemyscore.render(str(enemy.score), True, red), [360, 0])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
