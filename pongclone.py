@@ -195,7 +195,7 @@ def menu():
 def newGame(twoplayer=False):
     global white, black
     class Paddle():
-        def __init__(self, upkey, downkey):
+        def __init__(self, upkey, downkey, color):
             global screen
             self.area = [screen.get_width(), screen.get_height()]
             self.pos = [0, self.area[1]/2]
@@ -203,6 +203,7 @@ def newGame(twoplayer=False):
             self.speed = 5
             self.score = 0
             self.upkey, self.downkey = upkey, downkey
+            self.color = color
         def update(self):
             global screen, white
             keys = pygame.key.get_pressed()
@@ -212,7 +213,7 @@ def newGame(twoplayer=False):
             elif keys[self.downkey]:
                 if self.rect.bottom < self.area[1]-20:
                     self.rect.bottom += self.speed
-            pygame.draw.rect(screen, blue, self.rect)
+            pygame.draw.rect(screen, self.color, self.rect)
             return
     
     class Enemy():
@@ -341,9 +342,9 @@ def newGame(twoplayer=False):
                 self.container.append(new_ball)
 
     ball = MultiBall()
-    paddle = Paddle(pygame.K_w, pygame.K_s)
-    paddle_two = Paddle(pygame.K_UP, pygame.K_DOWN)
-    paddle_two.pos = [screen.get_width()-30, screen.get_height()/2]
+    paddle = Paddle(pygame.K_w, pygame.K_s, blue)
+    paddle_two = Paddle(pygame.K_UP, pygame.K_DOWN, red)
+    paddle_two.pos = [screen.get_width()-5, screen.get_height()/2]
     paddle_two.rect.center = paddle_two.pos
     enemy = Enemy()
     gameLoop(paddle, enemy, ball, twoplayer, paddle_two)
